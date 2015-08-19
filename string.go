@@ -12,6 +12,10 @@ type MinChar struct {
 
 // Validate check value against constraint
 func (validator MinChar) Validate(v interface{}) Error {
+	if isZero(v) {
+		return nil
+	}
+
 	if len(v.(string)) < validator.Constraint {
 		return NewValidationError("minChar", validator.Constraint)
 	}
@@ -39,6 +43,10 @@ type Email struct{}
 
 // Validate email addresses
 func (validator Email) Validate(v interface{}) Error {
+	if isZero(v) {
+		return nil
+	}
+
 	if !strings.Contains(v.(string), "@") || string(v.(string)[0]) == "@" || string(v.(string)[len(v.(string))-1]) == "@" {
 		return NewValidationError("email", v)
 	}
@@ -53,6 +61,10 @@ type Regex struct {
 
 // Validate using regex
 func (validator Regex) Validate(v interface{}) Error {
+	if isZero(v) {
+		return nil
+	}
+
 	regex, err := regexp.Compile(validator.Constraint)
 	if err != nil {
 		panic(err)
@@ -70,6 +82,10 @@ type UUID struct{}
 
 // Validate checks a string as correct UUID format
 func (validator UUID) Validate(v interface{}) Error {
+	if isZero(v) {
+		return nil
+	}
+
 	regex := regexp.MustCompile("^[a-z0-9]{8}-[a-z0-9]{4}-[1-5][a-z0-9]{3}-[a-z0-9]{4}-[a-z0-9]{12}$")
 
 	if !regex.MatchString(v.(string)) {

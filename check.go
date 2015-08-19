@@ -178,18 +178,26 @@ type NonEmpty struct{}
 
 // Validate value to not be a zeroed value, return error and empty slice of strings
 func (validator NonEmpty) Validate(v interface{}) Error {
+	if isZero(v) {
+		return NewValidationError("nonZero")
+	}
+	return nil
+}
+
+// Check if value is zero
+func isZero(v interface{}) bool {
 	t := reflect.TypeOf(v)
 
 	switch t.Kind() {
 	default:
 		if reflect.DeepEqual(reflect.Zero(t).Interface(), v) {
-			return NewValidationError("nonZero")
+			return true
 		}
 	case reflect.Array, reflect.Slice, reflect.Map, reflect.Chan, reflect.String:
 		if reflect.ValueOf(v).Len() == 0 {
-			return NewValidationError("nonZero")
+			return true
 		}
 	}
 
-	return nil
+	return false
 }
