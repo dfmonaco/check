@@ -32,6 +32,10 @@ type GreaterThan struct {
 
 // Validate check value against constraint
 func (validator GreaterThan) Validate(v interface{}) Error {
+	if isZero(v) {
+		return nil
+	}
+
 	switch val := v.(type) {
 	default:
 		return NewValidationError("NaN")
